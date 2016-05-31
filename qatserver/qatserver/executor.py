@@ -63,6 +63,8 @@ class TestExecResult:
     @data.setter
     def data(self, data):
         self._data = data
+
+    def reset(self):
         self._step_refs = []
         self._step_ref_pos = 0
         self.counters['total'] = 0
@@ -83,7 +85,8 @@ class TestExecResult:
                         'tags': tags,
                         'keyword': test_step['keyword'],
                         'name': test_step['name'],
-                        'status': test_step['result']['status']
+                        'status': test_step['result']['status'],
+                        'errorMessage': test_step['result'].get('error_message', None)
                     })
                 if test_scenario['keyword'] != 'Background':
                     scenarios.append({
@@ -120,11 +123,14 @@ class TestExecResult:
 
 class TestExecResultProxy(NamespaceProxy):
     """Proxy for TestExecResult, for syncing between multiple processes."""
-    _exposed_ = ('__getattribute__', '__setattr__', '__delattr__',
+    _exposed_ = ('__getattribute__', '__setattr__', '__delattr__', 'reset',
                  'update_counters')
 
     def iterator(self):
         return TestExecResult.iterator(self)
+
+    def reset(self):
+        return self._callmethod('reset')
 
     def update_counters(self, curr_result: str):
         return self._callmethod('update_counters', (curr_result, ))
@@ -156,6 +162,7 @@ def execute_tests(test_exec_uuid: str, test_exec_result: TestExecResult or TestE
                                   stdout=subprocess.PIPE)
         json_data = dryrun.stdout.read().decode('utf-8')
         test_exec_result.data = json.loads(json_data)
+        test_exec_result.reset()
 
         # execution
         test_exec_result.status = TestExecStatusEnum.executing
@@ -168,6 +175,11 @@ def execute_tests(test_exec_uuid: str, test_exec_result: TestExecResult or TestE
             test_step.set_result(symbol)
 
         # completion
+        execution.wait()
+        with open(results_output_file) as f:
+            text = f.read()
+            print('text: ', text)
+            test_exec_result.data = json.loads(text)
         test_exec_result.status = TestExecStatusEnum.done
     except Exception as error:
         test_exec_result.status = TestExecStatusEnum.errored
