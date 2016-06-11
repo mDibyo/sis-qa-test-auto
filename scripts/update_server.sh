@@ -26,9 +26,8 @@ update_docker_images_component() {
   echo "Updating ${component} Docker image"
   sudo docker save -o=${component}.tar ${DOCKER_NAMESPACE}/sis-qa-test-auto-${component} \
       && scp ${component}.tar ${SIS_SERVER_ADDRESS}:~/ \
-      && ssh ${SIS_SERVER_ADDRESS} "sudo docker load -i=${component}.tar; rm ${component}.tar"
+      && ssh -t ${SIS_SERVER_ADDRESS} "sudo docker load -i=${component}.tar; rm ${component}.tar"
   rm ${component}.tar
-
 }
 
 update_docker_images() {
