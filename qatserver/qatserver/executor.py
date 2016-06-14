@@ -52,6 +52,7 @@ class TestExecResult:
                  counters: dict=None, data=None):
         self.status = status
         self.counters = counters if counters is not None else Counter()
+        self.future = None
         self._data = data if data is not None else []
         self._step_refs = list(test_step.step for test_step in self.iterator())
         self._step_ref_pos = 0
@@ -197,5 +198,7 @@ class TestsExecutor(ProcessPoolExecutor):
     def submit(self, test_exec_uuid: str):
         test_exec_result = self.results_manager.TestExecResult()
         self.current_test_execs[test_exec_uuid] = test_exec_result
-        future = super().submit(self.execute_tests_func, test_exec_uuid, test_exec_result)
-        future.add_done_callback(lambda _: self.current_test_execs.pop(test_exec_uuid))
+        test_exec_result.future = \
+            super().submit(self.execute_tests_func, test_exec_uuid, test_exec_result)
+        test_exec_result.future.add_done_callback(
+            lambda _: self.current_test_execs.pop(test_exec_uuid))

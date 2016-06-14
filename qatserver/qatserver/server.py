@@ -54,11 +54,8 @@ class StatusHandler(BaseHandler):
         # check if tests are executing currently
         test_exec_result = self.executor.current_test_execs.get(test_exec_uuid, None)
         if test_exec_result is not None:
-            # print(test_exec_result.json())
             self.write_json(test_exec_result.json())
             return
-
-        # print(self.executor.current_test_execs)
 
         # check if tests have already completely executed.
         tests_log_dir = osp.join(LOGS_DIR, test_exec_uuid)
