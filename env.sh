@@ -29,7 +29,7 @@ export SIS_QATSERVER_PORT=8421
 # Extra command line flags that are directly passed to the qatserver
 # executable when it is started inside its Docker container (check
 # qatserver/run_server.sh).
-export SIS_QATSERVER_EXTRA_ARGS=""
+export SIS_QATSERVER_EXTRA_ARGS="${SIS_QATSERVER_EXTRA_ARGS}"
 
 # SIS_DASHBOARD_PORT
 #
@@ -45,7 +45,7 @@ export SIS_DASHBOARD_PORT=3000
 # Extra command line flags that are directly passed to the dashboard
 # server executable when it is started inside its Docker container
 # (check dashboard/run_dashboard.sh).
-export SIS_DASHBOARD_EXTRA_ARGS=""
+export SIS_DASHBOARD_EXTRA_ARGS="${SIS_QATSERVER_EXTRA_ARGS}"
 
 # SIS_TEST_WEBDRIVER
 #

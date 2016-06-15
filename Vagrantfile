@@ -1,27 +1,8 @@
-sis_env_keys = {
-  :SIS_TEST_DIR => 'SIS_TEST_DIR',
-  :SIS_LOGS_DIR => 'SIS_LOGS_DIR',
-  :SIS_SERVER_PORT => 'SIS_SERVER_PORT',
-  :SIS_DASHBOARD_PORT => 'SIS_DASHBOARD_PORT',
-  :SIS_TEST_WEBDRIVER => 'SIS_TEST_WEBDRIVER'
-}
-
 dashboard_port = 3000
 if ENV.key? sis_env_keys[:SIS_DASHBOARD_PORT]
   dashboard_port = ENV[sis_env_keys[:SIS_DASHBOARD_PORT]]
 end
 ENV[sis_env_keys[:SIS_TEST_WEBDRIVER]] = 'poltergeist'
-
-
-def get_env_file_string(env_keys)
-  env_keys.values.map { |key|
-    if ENV.key? key
-      "export #{key}=#{ENV[key]}"
-    else
-      "unset #{key}"
-    end
-  }.join("\n")
-end
 
 
 $docker_setup = <<SCRIPT
@@ -41,9 +22,7 @@ sudo /vagrant/scripts/install.sh
 echo "Setting environment variables"
 # Set environment variables
 cat > ~/.env << EOF
-#{get_env_file_string(sis_env_keys)}
-
-export SIS_DASHBOARD_EXTRA_ARGS='-b 0.0.0.0'
+export SIS_DASHBOARD_EXTRA_ARGS=' -b 0.0.0.0 '
 export SIS_ENV_SET=true
 EOF
 source ~/.profile \
