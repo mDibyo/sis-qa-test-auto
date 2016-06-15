@@ -68,7 +68,7 @@ export SIS_DASHBOARD_EXTRA_ARGS=""
 #   browsers are the only way in which webpages can be displayed on a
 #   remote server, since the server does not have a display attached to
 #   render the webpages on. Therefore, on the remote testing server, this
-#   must be selected.
+#   option must be selected.
 export SIS_TEST_WEBDRIVER=selenium
 
 # SIS_DOCKER_NAMESPACE

@@ -1,24 +1,11 @@
 # QA Test Automation (QATA) framework
-for UC Berkeley Student Information Systems (SIS) Campus Solutions
+for UC Berkeley Student Information Systems (SIS).
 
 [![Build Status](https://travis-ci.org/ucberkeley/sis-qa-test-auto.svg)](https://travis-ci.org/ucberkeley/sis-qa-test-auto)
 
 
 ## Environment variables
-By default, the following values are used. New values must be set while running the framework
-and will be automatically picked up.
-
-* `SIS_TEST_DIR=<project-dir>/test`: If using external test directory, set to location of
-external test directory.
-* `SIS_LOGS_DIR=<project-dir>/logs`: If using external logs directory, set to location of
-external logs directory.
-* `SIS_SERVER_PORT=8421`: Set to port number that server should listen on.
-* `SIS_DASHBOARD_PORT=3000`: Set to port number that dashboard should be available on.
-number.
-* `SIS_TEST_WEBDRIVER=selenium`: Selenium WebDriver runs test on the graphical Firefox browser.
-If deploying in an environment wihtout a graphical interface (for example, a remote server), set
-`SIS_TEST_WEBDRIVER=poltergeist`. The framework will then use Poltergeist WebDriver on PhantomJS
-headless browser.
+Check `env.sh`.
 
 
 ## Methods for setting up and running framework

@@ -10,22 +10,16 @@ if [ $( id | sed -e 's/(.*//' ) != "uid=0" ]; then
 fi
 
 
-project_dir=$(dirname $(readlink -f "$0"))
-: ${SIS_TEST_DIR:=${project_dir}/test}
-: ${SIS_LOGS_DIR:=${project_dir}/logs}
-: ${SIS_TEST_WEBDRIVER:=selenium}
-: ${DOCKER_NAMESPACE:=ucberkeley}
+source env.sh
 
 cid_dir=/var/run/qata
 mkdir -p ${cid_dir}
 
 server_cid_file=/var/run/qata/server.cid
-: ${SIS_SERVER_PORT:=8421}
-server_docker_image=${DOCKER_NAMESPACE}/sis-qa-test-auto-server
+server_docker_image=${SIS_DOCKER_NAMESPACE}/sis-qa-test-auto-server
 
 dashboard_cid_file=/var/run/qata/dashboard.cid
-: ${SIS_DASHBOARD_PORT:=3000}
-dashboard_docker_image=${DOCKER_NAMESPACE}/sis-qa-test-auto-dashboard
+dashboard_docker_image=${SIS_DOCKER_NAMESPACE}/sis-qa-test-auto-dashboard
 
 
 check_container() {
@@ -67,7 +61,7 @@ start() {
   local dashboard_up=1
 
   # Start server and dashboard
-  if check_container ${server_cid_file} ${SIS_SERVER_PORT}; then
+  if check_container ${server_cid_file} ${SIS_QATSERVER_PORT}; then
     server_up=0
     echo "QATA Server already running."
   else
@@ -80,9 +74,9 @@ start() {
         -t \
         -d \
         -e DISPLAY=${DISPLAY} \
-        -e SIS_SERVER_PORT=${SIS_SERVER_PORT} \
+        -e SIS_QATSERVER_PORT=${SIS_QATSERVER_PORT} \
         -e SIS_TEST_WEBDRIVER=${SIS_TEST_WEBDRIVER} \
-        -e SIS_SERVER_EXTRA_ARGS="${SIS_SERVER_EXTRA_ARGS}" \
+        -e SIS_QATSERVER_EXTRA_ARGS="${SIS_QATSERVER_EXTRA_ARGS}" \
         -v /tmp/.X11-unix:/tmp/.X11-unix \
         -v ${SIS_TEST_DIR}:/test \
         -v ${SIS_LOGS_DIR}:/logs \
@@ -101,7 +95,7 @@ start() {
         --net=host \
         -t \
         -d \
-        -e SIS_SERVER_PORT=${SIS_SERVER_PORT} \
+        -e SIS_SERVER_PORT=${SIS_QATSERVER_PORT} \
         -e SIS_DASHBOARD_PORT=${SIS_DASHBOARD_PORT} \
         -e SIS_DASHBOARD_EXTRA_ARGS="${SIS_DASHBOARD_EXTRA_ARGS}" \
         ${dashboard_docker_image})
@@ -109,10 +103,10 @@ start() {
 
   # Ensure server and dashboard have started up successfully, and save state
   while [[ ${server_up} -ne 0 ]] || [[ ${dashboard_up} -ne 0 ]]; do
-    if [[ ${server_up} -ne 0 ]] && [[ $(netstat -tulnp | grep ${SIS_SERVER_PORT}) ]]; then
+    if [[ ${server_up} -ne 0 ]] && [[ $(netstat -tulnp | grep ${SIS_QATSERVER_PORT}) ]]; then
       server_up=0
       echo ${server_cid} > ${server_cid_file}
-      echo "QATA Server started on port ${SIS_SERVER_PORT}."
+      echo "QATA Server started on port ${SIS_QATSERVER_PORT}."
     fi
     if [[ ${dashboard_up} -ne 0 ]] && [[ $(netstat -tulnp | grep ${SIS_DASHBOARD_PORT}) ]]; then
       dashboard_up=0
@@ -148,7 +142,7 @@ attach_to_server() {
 
   local cid
   cid=$(cat ${server_cid_file})
-  if ! [[ $(docker ps -a -q -f Id=${cid}) ]] || ! [[ $(netstat -tulnp | grep ${SIS_SERVER_PORT}) ]]; then
+  if ! [[ $(docker ps -a -q -f Id=${cid}) ]] || ! [[ $(netstat -tulnp | grep ${SIS_QATSERVER_PORT}) ]]; then
     echo "QATA Server not running. Cleaning up."
     stop
     return 1

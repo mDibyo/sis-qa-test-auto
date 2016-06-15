@@ -24,7 +24,7 @@ RUN bash -c "\
     source /etc/profile.d/rvm.sh \
     && cd ${HOME} \
     && gem install bundle \
-    && bundle install --jobs 4 --retry 3"
+    && bundle install --jobs $(nproc) --retry 3"
 
 EXPOSE 8421
 

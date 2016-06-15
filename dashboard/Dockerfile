@@ -11,7 +11,7 @@ EXPOSE 3000
 
 COPY . /dashboard/
 RUN cd /dashboard \
-    && bundle install --jobs 4 --retry 3 \
+    && bundle install --jobs $(nproc) --retry 3 \
     && npm install
 
 ENTRYPOINT ["/dashboard/run_dashboard.sh"]
