@@ -4,21 +4,32 @@ for UC Berkeley Student Information Systems (SIS).
 [![Build Status](https://travis-ci.org/ucberkeley/sis-qa-test-auto.svg)](https://travis-ci.org/ucberkeley/sis-qa-test-auto)
 
 
-## Environment variables
-Check `env.sh`.
+## Installation
 
-
-## Methods for setting up and running framework
 The QA Test Automation framework is itself highly automated. There are a number of ways to set
 up and run the framework. The two main components: server and dashboard have been
 [Docker](https://www.docker.com/)ized. Local installation is also possible but not recommended.
 
-First, add the configuration/credential files required for running the tests by following
-[these instructions](test/README.md).
+The framework is intended to work on an Ubuntu server. But it can be set up to work on
+macOS/Windows as well inside a Ubuntu VM.
 
-Then, follow instructions in one of the following sections.
+### <a name="installation-on-macos-windows"></a>On macOS/Windows
 
-### Using Docker Engine
+1. Install a VM manager like [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
+
+1. Set up a VM using a [http://releases.ubuntu.com/14.04/](Ubuntu 14.04) 64-bit Desktop image.
+
+1. Start up the VM and follow instructions for [installation on Linux](#installation-on-linux)
+inside it.
+
+
+### <a name="installation-on-linux"></a>On Linux
+
+1. Clone this repository.
+
+2. Follow instructions in one of these sections.
+
+#### <a name="installation-on-linux-using-docker-engine"></a> Using Docker Engine _[preferred method]_
 This method uses pre-built images from the
 [ucberkeley public Docker registry](https://hub.docker.com/r/ucberkeley/). Alternatively, images
 can be built locally by running `scripts/build.sh` (after installing Docker Engine).
@@ -32,7 +43,7 @@ run will take longer since the docker container will be downloaded and then run.
 1. When required, stop the service with `qata stop`, or restart with `qata restart`
 1. If required, attach to the service with `qata attach`.
 
-### Using Docker Compose (along with Docker Engine)
+#### <a name="installation-on-linux-using-docker-compose"></a>Using Docker Compose (along with Docker Engine)
 This method uses Docker Compose to automate the process of building and running images.
 
 1. [Install Docker Compose](https://docs.docker.com/compose/install/) (in addition to [Docker
@@ -41,16 +52,24 @@ Engine](https://docs.docker.com/installation/)).
 and/or logs directory, run as `sudo -E docker-compose up` to pass in environment variables). The
 first run will take longer since the Docker images will be built and then run.
 
-### Using Vagrant
+### <a name="installation-using-vagrant"></a>Using Vagrant _[experimental]_
 This method runs Docker Engine inside a Vagrant VM.
 
+1. Install [Vagrant](https://www.vagrantup.com/downloads.html)
 1. In the project directory, run `vagrant up`. This will also build the Docker images inside the
 VM and set all environment variables.
 1. `vagrant ssh` into the VM and then start the service with `sudo -E qata start`.
 
-### Installing locally
+#### Installing locally
 This method may speed up testing, but is otherwise not recommended. Follow instructions in
 [qatserver/README.md](qatserver/README.md) and [dashboard/README.md](dashboard/README.md).
+
+
+## Set up
+
+## Update
+
+## Troubleshoot
 
 ## Additional notes
 1. Keep the test execution server files and Gemfile (and Gemfile.lock) in docker/sis-qa-test-auto
